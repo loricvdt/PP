@@ -1,15 +1,16 @@
-import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
-from numpy import pi
-from matplotlib import animation
-import scipy.linalg
+import numpy as np
 import scipy as sp
+import scipy.linalg
 import scipy.sparse
 import scipy.sparse.linalg
-import toml, time, sys
-import util, field
+import sys
+import time
+import toml
+from matplotlib import animation
 
+import field
+import util
 
 size, delta_t, N, step = 0, 0, 0, 0
 k_x, k_y, a_x, a_y = 0, 0, 0, 0
@@ -131,7 +132,7 @@ def plot_animation(t):
 
 
 
-	vector_selon_x = util.x_concatenate(wave_function, N) 	
+	vector_selon_x = util.x_concatenate(wave_function, N)
 
 
 	vector_derive_y_selon_x = util.x_concatenate(util.dy_square(wave_function, N, step), N)
@@ -142,7 +143,7 @@ def plot_animation(t):
 
 
 
-	vector_selon_y = util.y_concatenate(wave_function, N) 	
+	vector_selon_y = util.y_concatenate(wave_function, N)
 	vector_derive_x_selon_y = util.y_concatenate(util.dx_square(wave_function, N, step), N)
 	U_selon_y = vector_selon_y  + (1j*delta_t/2 )*(vector_derive_x_selon_y - V_y *vector_selon_y)
 	U_selon_y_plus = scipy.sparse.linalg.spsolve(HY, U_selon_y)
