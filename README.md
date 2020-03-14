@@ -6,4 +6,4 @@ Potential Program: graphical interactive solution of the Schrödinger equation i
 Based on the contributions of BA2 students at the École polytechnique de Bruxelles:
 Frédéric Sabot, Corentin Simon
 
-Edited by Loric Vandentempel
+Edited by [Loric Vandentempel](https://github.com/loricvdt/)
