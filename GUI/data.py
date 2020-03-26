@@ -25,6 +25,7 @@ E_max = 3
 
 
 def calculate_potential():
+	""" Calculates the value of the potential """
 	global potential
 	potential[0] = [x_min, barrier_start, barrier_start, barrier_end, barrier_end, x_max]
 	potential[1] = [V_0, V_0, V_barrier, V_barrier, V_0, V_0]

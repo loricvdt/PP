@@ -14,11 +14,14 @@ epsilon_E = (data.E_max - data.E_min) * relative_epsilon
 
 
 def update_textbox(textbox, value):
+	""" Updates the value in a textbox """
 	textbox.delete(0, view.tk.END)
 	textbox.insert(0, value)
 
 
+# Value updates
 def update_v_0(value):
+	""" Updates the initial potential value """
 	data.V_0 = float(value)
 	view.V_0_slider.set(data.V_0)
 	update_textbox(view.V_0_textbox, round(data.V_0, 3))
@@ -26,6 +29,7 @@ def update_v_0(value):
 
 
 def update_v_barrier(value):
+	""" Updates the potential barrier value """
 	data.V_barrier = float(value)
 	view.V_barrier_slider.set(data.V_barrier)
 	update_textbox(view.V_barrier_textbox, round(data.V_barrier, 3))
@@ -33,6 +37,7 @@ def update_v_barrier(value):
 
 
 def update_barrier_start(value):
+	""" Updates the start of the potential barrier """
 	if float(value) < data.barrier_end - epsilon_x:
 		data.barrier_start = float(value)
 	else:
@@ -43,6 +48,7 @@ def update_barrier_start(value):
 
 
 def update_barrier_end(value):
+	""" Updates the end of the potential barrier """
 	if float(value) > data.barrier_start + epsilon_x:
 		data.barrier_end = float(value)
 	else:
@@ -52,56 +58,7 @@ def update_barrier_end(value):
 	update_potential()
 
 
-def update_potential():
-	data.calculate_potential()
-	view.potential_plt.set_data(data.potential[0], data.potential[1])
-	view.plt.draw()
-	view.canvas.draw()
-
-
-def reset_values(event):
-	update_v_0(data.default_V_0)
-	update_v_barrier(data.default_V_barrier)
-	update_barrier_start(data.default_barrier_start)
-	update_barrier_end(data.default_barrier_end)
-
-
-def button_press_callback(event):
-	global in_range
-	if event.inaxes:
-		if (
-				data.x_min <= event.xdata <= data.barrier_start or data.barrier_end <= event.xdata <= data.x_max) and data.V_0 - epsilon_E <= event.ydata <= data.V_0 + epsilon_E:
-			in_range = "V_0"
-		elif data.barrier_start <= event.xdata <= data.barrier_end and data.V_barrier - epsilon_E <= event.ydata <= data.V_barrier + epsilon_E:
-			in_range = "V_barrier"
-		elif data.barrier_start - epsilon_x <= event.xdata <= data.barrier_start + epsilon_x and data.V_0 <= event.ydata <= data.V_barrier:
-			in_range = "barrier_start"
-		elif data.barrier_end - epsilon_x <= event.xdata <= data.barrier_end + epsilon_x and data.V_0 <= event.ydata <= data.V_barrier:
-			in_range = "barrier_end"
-		else:
-			in_range = ""
-
-	else:
-		in_range = ""
-
-
-def button_release_callback(event):
-	global in_range
-	in_range = ""
-
-
-def motion_notify_callback(event):
-	if event.button and event.inaxes:
-		if in_range == "V_0":
-			update_v_0(event.ydata)
-		elif in_range == "V_barrier":
-			update_v_barrier(event.ydata)
-		elif in_range == "barrier_start":
-			update_barrier_start(event.xdata)
-		elif in_range == "barrier_end":
-			update_barrier_end(event.xdata)
-
-
+# Update values from a different textboxes
 def update_v_0_from_tb(event):
 	update_v_0(good_value(view.V_0_textbox.get(), data.V_0))
 
@@ -119,6 +76,7 @@ def update_barrier_end_from_tb(event):
 
 
 def good_value(value, old_value):
+	""" Checks if the value is actually a number, if not returns the previous one"""
 	try:
 		float(value)
 		return float(value)
@@ -126,7 +84,63 @@ def good_value(value, old_value):
 		return old_value
 
 
+def reset_values(event):
+	""" Resets to initial values """
+	update_v_0(data.default_V_0)
+	update_v_barrier(data.default_V_barrier)
+	update_barrier_start(data.default_barrier_start)
+	update_barrier_end(data.default_barrier_end)
+
+
+def update_potential():
+	""" Updates the value of the potential and refreshes the view """
+	data.calculate_potential()
+	view.potential_plt.set_data(data.potential[0], data.potential[1])
+	view.plt.draw()
+	view.canvas.draw()
+
+
+# Plot interraction handling
+def button_press_callback(event):
+	""" Detects clicks and checks if in range of an editable plot """
+	global in_range
+	if event.inaxes:
+		if (data.x_min <= event.xdata <= data.barrier_start or data.barrier_end <= event.xdata <= data.x_max) and data.V_0 - epsilon_E <= event.ydata <= data.V_0 + epsilon_E:
+			in_range = "V_0"
+		elif data.barrier_start <= event.xdata <= data.barrier_end and data.V_barrier - epsilon_E <= event.ydata <= data.V_barrier + epsilon_E:
+			in_range = "V_barrier"
+		elif data.barrier_start - epsilon_x <= event.xdata <= data.barrier_start + epsilon_x and data.V_0 <= event.ydata <= data.V_barrier:
+			in_range = "barrier_start"
+		elif data.barrier_end - epsilon_x <= event.xdata <= data.barrier_end + epsilon_x and data.V_0 <= event.ydata <= data.V_barrier:
+			in_range = "barrier_end"
+		else:
+			in_range = ""
+
+	else:
+		in_range = ""
+
+
+def button_release_callback(event):
+	""" Detects click release and removes any interaction with the plot """
+	global in_range
+	in_range = ""
+
+
+def motion_notify_callback(event):
+	""" Detects movement while clicking and updates the corresponding values """
+	if event.button and event.inaxes:
+		if in_range == "V_0":
+			update_v_0(event.ydata)
+		elif in_range == "V_barrier":
+			update_v_barrier(event.ydata)
+		elif in_range == "barrier_start":
+			update_barrier_start(event.xdata)
+		elif in_range == "barrier_end":
+			update_barrier_end(event.xdata)
+
+
 def connect_figure_actions():
+	""" Binds the plot actions with corresponding functions """
 	view.figure.canvas.mpl_connect('button_press_event', button_press_callback)
 	view.figure.canvas.mpl_connect('button_release_event', button_release_callback)
 	view.figure.canvas.mpl_connect('motion_notify_event', motion_notify_callback)
