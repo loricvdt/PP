@@ -10,7 +10,7 @@ The packages needed to run this code are **tkinter** (may already come with Pyth
 
 ## Usage
 
-Potential barrier parameter are settable by:
+Potential barrier parameters are settable by:
 
 - Moving the sliders on the right
 - Setting the value in the corresponding text box and pressing enter
