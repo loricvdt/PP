@@ -19,9 +19,12 @@ barrier_end = default_barrier_end
 potential = [[], []]  # Potential plot data
 
 # Energy
-E = 1
+default_E = 1
+E = default_E
 E_min = -1
 E_max = 3
+
+energy = [[x_min, x_max], []]  # Potential plot data
 
 
 def calculate_potential():
@@ -29,3 +32,9 @@ def calculate_potential():
 	global potential
 	potential[0] = [x_min, barrier_start, barrier_start, barrier_end, barrier_end, x_max]
 	potential[1] = [V_0, V_0, V_barrier, V_barrier, V_0, V_0]
+
+
+def calculate_energy():
+	""" Calculates the value of the potential """
+	global energy
+	energy[1] = [E, E]

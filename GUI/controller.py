@@ -58,7 +58,19 @@ def update_barrier_end(value):
 	update_potential()
 
 
+def update_e(value):
+	""" Updates the energy """
+	data.E = float(value)
+	view.E_slider.set(data.E)
+	update_textbox(view.E_textbox, round(data.E, 3))
+	update_energy()
+
+
 # Update values from a different textboxes
+def update_e_from_tb(event):
+	update_e(good_value(view.E_textbox.get(), data.E))
+
+
 def update_v_0_from_tb(event):
 	update_v_0(good_value(view.V_0_textbox.get(), data.V_0))
 
@@ -90,12 +102,21 @@ def reset_values(event):
 	update_v_barrier(data.default_V_barrier)
 	update_barrier_start(data.default_barrier_start)
 	update_barrier_end(data.default_barrier_end)
+	update_e(data.default_E)
 
 
 def update_potential():
 	""" Updates the value of the potential and refreshes the view """
 	data.calculate_potential()
 	view.potential_plt.set_data(data.potential[0], data.potential[1])
+	view.plt.draw()
+	view.canvas.draw()
+
+
+def update_energy():
+	""" Updates the value of the energy and refreshes the view """
+	data.calculate_energy()
+	view.energy_plt.set_data(data.energy[0], data.energy[1])
 	view.plt.draw()
 	view.canvas.draw()
 
@@ -113,6 +134,8 @@ def button_press_callback(event):
 			in_range = "barrier_start"
 		elif data.barrier_end - epsilon_x <= event.xdata <= data.barrier_end + epsilon_x and data.V_0 <= event.ydata <= data.V_barrier:
 			in_range = "barrier_end"
+		elif data.E - epsilon_E <= event.ydata <= data.E + epsilon_E:
+			in_range = "E"
 		else:
 			in_range = ""
 
@@ -137,6 +160,8 @@ def motion_notify_callback(event):
 			update_barrier_start(event.xdata)
 		elif in_range == "barrier_end":
 			update_barrier_end(event.xdata)
+		elif in_range == "E":
+			update_e(event.ydata)
 
 
 def connect_figure_actions():
