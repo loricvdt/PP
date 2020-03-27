@@ -109,6 +109,7 @@ def update_potential():
 	""" Updates the value of the potential and refreshes the view """
 	data.calculate_potential()
 	view.potential_plt.set_data(data.potential[0], data.potential[1])
+	update_wave_function()
 	view.plt.draw()
 	view.canvas.draw()
 
@@ -117,11 +118,18 @@ def update_energy():
 	""" Updates the value of the energy and refreshes the view """
 	data.calculate_energy()
 	view.energy_plt.set_data(data.energy[0], data.energy[1])
+	update_wave_function()
 	view.plt.draw()
 	view.canvas.draw()
 
 
-# Plot interraction handling
+def update_wave_function():
+	""" Updates the wave function """
+	data.calculate_wave_function()
+	view.wave_function_plt.set_data(data.psi[0], data.psi[1])
+
+
+# Plot interaction handling
 def button_press_callback(event):
 	""" Detects clicks and checks if in range of an editable plot """
 	global in_range

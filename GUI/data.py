@@ -2,6 +2,8 @@ if __name__ == "__main__":
 	print("main.py should be started instead")
 	exit()
 
+import numpy as np
+
 # Calculation range (nm)
 x_min = -4
 x_max = 6
@@ -26,6 +28,11 @@ E_max = 3
 
 energy = [[x_min, x_max], []]  # Potential plot data
 
+# Wave function
+psi_min = -4
+psi_max = 4
+psi = [[], []]
+
 
 def calculate_potential():
 	""" Calculates the value of the potential """
@@ -38,3 +45,9 @@ def calculate_energy():
 	""" Calculates the value of the potential """
 	global energy
 	energy[1] = [E, E]
+
+
+def calculate_wave_function():
+	""" Calculates the wave function """
+	psi[0] = [x_min, x_max]
+	psi[1] = [0, 0]

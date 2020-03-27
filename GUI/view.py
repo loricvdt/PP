@@ -25,18 +25,28 @@ figure = plt.Figure()
 canvas = FigureCanvasTkAgg(figure, window)
 canvas.get_tk_widget().pack(side=tk.LEFT)
 
-# Create and initialise plot
+# Create and initialise plots
 ax = figure.add_subplot(111)
 ax.set_xlim(data.x_min, data.x_max)
 ax.set_ylim(data.E_min, data.E_max)
-ax.set_ylabel('$Energy$ (eV)')
-ax.set_xlabel('$Position$ (nm)')
+ax.set_ylabel('Energy (eV)')
+ax.set_xlabel('Position (nm)')
+ax.set_facecolor((1, 1, 1, 0))
+
+ax2 = ax.twinx()
+ax2.set_ylim(data.psi_min, data.psi_max)
+ax2.set_ylabel('Wave function')
+ax2.set_zorder(-1)
 
 data.calculate_energy()
 energy_plt, = ax.plot(data.energy[0], data.energy[1], 'g--', linewidth=1, label="Energy")
 
 data.calculate_potential()
 potential_plt, = ax.plot(data.potential[0], data.potential[1], 'b', label="Potential")
+
+data.calculate_wave_function()
+wave_function_plt, = ax2.plot(data.psi[0], data.psi[1], 'k', linewidth=1, label="Wave function")
+
 ax.legend()
 figure.tight_layout()
 
