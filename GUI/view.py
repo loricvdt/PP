@@ -32,12 +32,12 @@ ax.set_ylim(data.E_min, data.E_max)
 ax.set_ylabel('$Energy$ (eV)')
 ax.set_xlabel('$Position$ (nm)')
 
-data.calculate_potential()
-potential_plt, = ax.plot(data.potential[0], data.potential[1])
-
 data.calculate_energy()
-energy_plt, = ax.plot(data.energy[0], data.energy[1])
+energy_plt, = ax.plot(data.energy[0], data.energy[1], 'g--', linewidth=1, label="Energy")
 
+data.calculate_potential()
+potential_plt, = ax.plot(data.potential[0], data.potential[1], 'b', label="Potential")
+ax.legend()
 figure.tight_layout()
 
 # Creating sliders
