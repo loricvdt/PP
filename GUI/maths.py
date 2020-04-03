@@ -49,5 +49,5 @@ def calculate_energy():
 
 def calculate_wave_function():
 	""" Calculates the wave function """
-	psi[0] = [x_min, x_max]
-	psi[1] = [0, 0]
+	global psi
+
