@@ -1,12 +1,12 @@
 # GUI for the potential barrier
 
-Graphical interface enabling to modify parameters of the wave function passing through a potential barrier in real time
+Graphical interface enabling to modify parameters of the wave function passing through a potential barrier in real time. For information on how the calculations are made check [calculations](calculations.pdf)
 
 Created by [Loric Vandentempel](https://github.com/loricvdt/)
 
 ## Dependencies
 
-The packages needed to run this code are **tkinter** (may already come with Python) and **matplotlib**.
+The packages needed to run this code are **tkinter** (may already come with Python) and **matplotlib**
 
 ## Usage
 
