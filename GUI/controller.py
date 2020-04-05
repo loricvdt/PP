@@ -11,6 +11,7 @@ relative_epsilon = 0.05
 in_range = ""
 epsilon_x = (maths.x_max - maths.x_min) * relative_epsilon
 epsilon_E = (maths.E_max - maths.E_min) * relative_epsilon
+starting_x = 0
 
 
 def update_textbox(textbox, value):
@@ -145,7 +146,8 @@ def update_wave_function():
 # Plot interaction handling
 def button_press_callback(event):
 	""" Detects clicks and checks if in range of an editable plot """
-	global in_range
+	global in_range, starting_x
+
 	if event.inaxes:
 		if maths.x_min <= event.xdata <= maths.barrier_start and maths.V_0 - epsilon_E <= event.ydata <= maths.V_0 + epsilon_E:
 			in_range = "V_0"
@@ -153,12 +155,15 @@ def button_press_callback(event):
 			in_range = "V_barrier"
 		elif maths.barrier_end <= event.xdata <= maths.x_max and maths.V_1 - epsilon_E <= event.ydata <= maths.V_1 + epsilon_E:
 			in_range = "V_1"
-		elif maths.barrier_start - epsilon_x <= event.xdata <= maths.barrier_start + epsilon_x and maths.V_0 <= event.ydata <= maths.V_barrier:
+		elif maths.barrier_start - epsilon_x <= event.xdata <= maths.barrier_start + epsilon_x and min([maths.V_0, maths.V_barrier]) <= event.ydata <= max([maths.V_0, maths.V_barrier]):
 			in_range = "barrier_start"
-		elif maths.barrier_end - epsilon_x <= event.xdata <= maths.barrier_end + epsilon_x and maths.V_0 <= event.ydata <= maths.V_barrier:
+		elif maths.barrier_end - epsilon_x <= event.xdata <= maths.barrier_end + epsilon_x and min([maths.V_barrier, maths.V_1]) <= event.ydata <= max([maths.V_barrier, maths.V_1]):
 			in_range = "barrier_end"
 		elif maths.E - epsilon_E <= event.ydata <= maths.E + epsilon_E:
 			in_range = "E"
+		elif maths.barrier_start + epsilon_x <= event.xdata <= maths.barrier_end - epsilon_x and min([maths.V_0, maths.V_barrier, maths.V_1]) <= event.ydata <= max([maths.V_0, maths.V_barrier, maths.V_1]):
+			in_range = "barrier"
+			starting_x = event.xdata
 		else:
 			in_range = ""
 
@@ -174,6 +179,8 @@ def button_release_callback(event):
 
 def motion_notify_callback(event):
 	""" Detects movement while clicking and updates the corresponding values """
+	global in_range, starting_x
+
 	if event.button and event.inaxes:
 		if in_range == "V_0":
 			update_v_0(event.ydata)
@@ -187,6 +194,12 @@ def motion_notify_callback(event):
 			update_barrier_end(event.xdata)
 		elif in_range == "E":
 			update_e(event.ydata)
+		elif in_range == "barrier":
+			delta = event.xdata - starting_x
+			if maths.barrier_start + delta >= maths.x_min and maths.barrier_end + delta <= maths.x_max:
+				starting_x = starting_x + delta
+				update_barrier_start(maths.barrier_start + delta)
+				update_barrier_end(maths.barrier_end + delta)
 
 
 def connect_figure_actions():

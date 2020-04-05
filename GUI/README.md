@@ -10,8 +10,10 @@ The packages needed to run this code are **tkinter** (may already come with Pyth
 
 ## Usage
 
-Potential barrier parameters are settable by:
+Potential barrier and energy parameters are settable by:
 
 - Moving the sliders on the right
 - Setting the value in the corresponding text box and pressing enter
-- Dragging the potential line on the graph to the desired shape
+- Dragging the lines on the graph to the desired shape
+
+In addition, it is also possible to drag in between the vertical lines of the potential to move the entire barrier sideways

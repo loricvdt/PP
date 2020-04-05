@@ -95,7 +95,6 @@ def calculate_constants():
 		B = A * np.exp(2 * 1j * k_b * x_e)
 		R = np.exp(1j * k_s * x_s) * (A * np.exp(1j * k_b * x_s) + B * np.exp(-1j * k_b * x_s) - np.exp(1j * k_s * x_s))
 		T = np.exp(-1j * k_e * x_e) * (A * np.exp(1j * k_b * x_e) + B * np.exp(-1j * k_b * x_e))
-		print("T = ", abs(T))
 
 
 def wave_function_value(x):
