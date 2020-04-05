@@ -21,7 +21,7 @@ def update_textbox(textbox, value):
 
 # Value updates
 def update_v_0(value):
-	""" Updates the initial potential value """
+	""" Updates potential value before the barrier """
 	maths.V_0 = float(value)
 	view.V_0_slider.set(maths.V_0)
 	update_textbox(view.V_0_textbox, round(maths.V_0, 3))
@@ -33,6 +33,14 @@ def update_v_barrier(value):
 	maths.V_barrier = float(value)
 	view.V_barrier_slider.set(maths.V_barrier)
 	update_textbox(view.V_barrier_textbox, round(maths.V_barrier, 3))
+	update_potential()
+
+
+def update_v_1(value):
+	""" Updates the potential value after the barrier """
+	maths.V_1 = float(value)
+	view.V_1_slider.set(maths.V_1)
+	update_textbox(view.V_1_textbox, round(maths.V_1, 3))
 	update_potential()
 
 
@@ -79,6 +87,10 @@ def update_v_barrier_from_tb(event):
 	update_v_barrier(good_value(view.V_barrier_textbox.get(), maths.V_barrier))
 
 
+def update_v_1_from_tb(event):
+	update_v_1(good_value(view.V_1_textbox.get(), maths.V_1))
+
+
 def update_barrier_start_from_tb(event):
 	update_barrier_start(good_value(view.barrier_start_textbox.get(), maths.barrier_start))
 
@@ -100,6 +112,7 @@ def reset_values(event):
 	""" Resets to initial values """
 	update_v_0(maths.default_V_0)
 	update_v_barrier(maths.default_V_barrier)
+	update_v_1(maths.default_V_1)
 	update_barrier_start(maths.default_barrier_start)
 	update_barrier_end(maths.default_barrier_end)
 	update_e(maths.default_E)
@@ -134,10 +147,12 @@ def button_press_callback(event):
 	""" Detects clicks and checks if in range of an editable plot """
 	global in_range
 	if event.inaxes:
-		if (maths.x_min <= event.xdata <= maths.barrier_start or maths.barrier_end <= event.xdata <= maths.x_max) and maths.V_0 - epsilon_E <= event.ydata <= maths.V_0 + epsilon_E:
+		if maths.x_min <= event.xdata <= maths.barrier_start and maths.V_0 - epsilon_E <= event.ydata <= maths.V_0 + epsilon_E:
 			in_range = "V_0"
 		elif maths.barrier_start <= event.xdata <= maths.barrier_end and maths.V_barrier - epsilon_E <= event.ydata <= maths.V_barrier + epsilon_E:
 			in_range = "V_barrier"
+		elif maths.barrier_end <= event.xdata <= maths.x_max and maths.V_1 - epsilon_E <= event.ydata <= maths.V_1 + epsilon_E:
+			in_range = "V_1"
 		elif maths.barrier_start - epsilon_x <= event.xdata <= maths.barrier_start + epsilon_x and maths.V_0 <= event.ydata <= maths.V_barrier:
 			in_range = "barrier_start"
 		elif maths.barrier_end - epsilon_x <= event.xdata <= maths.barrier_end + epsilon_x and maths.V_0 <= event.ydata <= maths.V_barrier:
@@ -164,6 +179,8 @@ def motion_notify_callback(event):
 			update_v_0(event.ydata)
 		elif in_range == "V_barrier":
 			update_v_barrier(event.ydata)
+		elif in_range == "V_1":
+			update_v_1(event.ydata)
 		elif in_range == "barrier_start":
 			update_barrier_start(event.xdata)
 		elif in_range == "barrier_end":
