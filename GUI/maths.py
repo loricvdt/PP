@@ -73,44 +73,37 @@ def calculate_wave_function():
 		psi[1].append(np.abs(wave_function_value(x)))
 
 
-def calculate_k(v):
-	""" Returns the value of k or K according to the potential """
-	if E - v >= 0:  # Returns k
-		return np.sqrt((E - v) / E) * k_0
-	else:  # E - v < 0  # Returns K
-		return np.sqrt((v - E) / E) * k_0
-
-
 def calculate_constants():
 	""" Calculate needed constants for the wave function """
 	global k_s, k_b, k_e, A, B, R, T
-	k_s = calculate_k(V_0)
-	k_b = calculate_k(V_barrier)
-	k_e = calculate_k(V_1)
+	k_s = np.sqrt((E - V_0) / E) * k_0
+	k_b = np.sqrt((E - V_barrier) / E) * k_0
+	k_e = np.sqrt((E - V_1) / E) * k_0
 	x_s = barrier_start
 	x_e = barrier_end
 
-	if E - V_barrier >= 0 and E - V_1 >= 0:  # Case 1
-		A = 1 / (np.exp(2 * 1j * k_b * x_e) + (1 + k_b / k_s) / (1 - k_b / k_s) * np.exp(2 * 1j * k_b * x_s)) * (2 * np.exp(1j * k_s * k_b * x_s)) / (1 - k_b / k_s)
-		B = A * np.exp(2 * 1j * k_b * x_e)
+	if E - V_barrier > 0:  # Case 1
+		A = 1 / \
+			((k_b / k_e - 1) / (k_b / k_e + 1) * np.exp(2 * 1j * k_b * x_e) + (1 + k_b / k_s) / (1 - k_b / k_s) * np.exp(2 * 1j * k_b * x_s)) \
+			* (2 * np.exp(1j * k_s * k_b * x_s)) / (1 - k_b / k_s)
+		B = (k_b / k_e - 1) / (k_b / k_e + 1) * A * np.exp(2 * 1j * k_b * x_e)
 		R = np.exp(1j * k_s * x_s) * (A * np.exp(1j * k_b * x_s) + B * np.exp(-1j * k_b * x_s) - np.exp(1j * k_s * x_s))
 		T = np.exp(-1j * k_e * x_e) * (A * np.exp(1j * k_b * x_e) + B * np.exp(-1j * k_b * x_e))
 
 
 def wave_function_value(x):
 	""" Returns value of the wave function at a x value """
-	if E - V_0 < 0:
+	if E - V_0 <= 0:
 		return 0
-	else:  # E-V_0 >= 0
+	else:  # E - V_0 > 0
 		if x < barrier_start:
 			return np.exp(1j * k_s * x) + R * np.exp(-1j * k_s * x)
 		elif barrier_start <= x <= barrier_end:
-			if E - V_barrier >= 0:
+			if E - V_barrier > 0:
 				return A * np.exp(1j * k_b * x) + B * np.exp(-1j * k_b * x)
-			else:  # E-V_barrier <0
+			elif E - V_barrier < 0:
+				return 0
+			else:  # E - V_barrier = 0
 				return 0
 		else:  # x > barrier_end
-			if E - V_1 >= 0:
-				return T * np.exp(1j * k_e * x)
-			else:  # E-V_barrier <0
-				return 0
+			return T * np.exp(1j * k_e * x)
