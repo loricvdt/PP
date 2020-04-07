@@ -36,6 +36,7 @@ k_0 = 6
 # Constants
 k_s = 0
 k_b = 0
+K_b = 0
 k_e = 0
 A = 0
 B = 0
@@ -75,10 +76,11 @@ def calculate_wave_function():
 
 def calculate_constants():
 	""" Calculate needed constants for the wave function """
-	global k_s, k_b, k_e, A, B, R, T
+	global k_s, k_b, K_b, k_e, A, B, R, T
 	k_s = np.sqrt((E - V_0) / E) * k_0
 	k_b = np.sqrt((E - V_barrier) / E) * k_0
-	k_e = np.sqrt((E - V_1) / E) * k_0
+	K_b = np.sqrt((V_barrier - E) / E) * k_0
+	k_e = np.sqrt((E - V_1) / E + 0j) * k_0  # + Oj added to allow square root calculation for negative numbers
 	x_s = barrier_start
 	x_e = barrier_end
 
@@ -89,6 +91,21 @@ def calculate_constants():
 		B = (k_b / k_e - 1) / (k_b / k_e + 1) * A * np.exp(2 * 1j * k_b * x_e)
 		R = np.exp(1j * k_s * x_s) * (A * np.exp(1j * k_b * x_s) + B * np.exp(-1j * k_b * x_s) - np.exp(1j * k_s * x_s))
 		T = np.exp(-1j * k_e * x_e) * (A * np.exp(1j * k_b * x_e) + B * np.exp(-1j * k_b * x_e))
+	elif E - V_barrier < 0:  # Case 2
+		A = 1 / \
+			(
+				(1j * k_e * np.sinh(K_b * x_e) - K_b * np.cosh(K_b * x_e)) / (K_b * np.sinh(K_b * x_e) - 1j * k_e * np.cosh(K_b * x_e))
+				+ (1j * k_s * np.sinh(K_b * x_s) + K_b * np.cosh(K_b * x_s)) / (1j * k_s * np.cosh(K_b * x_s) + K_b * np.sinh(K_b * x_s))
+			) \
+			* 2 * 1j * k_s * np.exp(1j * k_s * x_s) / \
+			(1j * k_s * np.cosh(K_b * x_s) + K_b * np.sinh(K_b * x_s))
+		B = A * \
+			(1j * k_e * np.sinh(K_b * x_e) - K_b * np.cosh(K_b * x_e)) / \
+			(K_b * np.sinh(K_b * x_e) - 1j * k_e * np.cosh(K_b * x_e))
+		R = np.exp(1j * k_s * x_s) * (A * np.sinh(K_b * x_s) + B * np.cosh(K_b * x_s) - np.exp(1j * k_s * x_s))
+		T = np.exp(-1j * k_e * x_e) * (A * np.sinh(K_b * x_e) + B * np.cosh(K_b * x_e))
+	else:  # E - V_barrier == 0  # Case 3
+		return
 
 
 def wave_function_value(x):
@@ -102,7 +119,7 @@ def wave_function_value(x):
 			if E - V_barrier > 0:
 				return A * np.exp(1j * k_b * x) + B * np.exp(-1j * k_b * x)
 			elif E - V_barrier < 0:
-				return 0
+				return A * np.sinh(K_b * x) + B * np.cosh(K_b * x)
 			else:  # E - V_barrier = 0
 				return 0
 		else:  # x > barrier_end
