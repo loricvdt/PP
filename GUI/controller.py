@@ -7,7 +7,7 @@ import maths
 import view
 
 # For mouse precision (also dictates how close the sides of the potential can be)
-relative_epsilon = 0.05
+relative_epsilon = 0.02
 in_range = ""
 epsilon_x = (maths.x_max - maths.x_min) * relative_epsilon
 epsilon_E = (maths.E_max - maths.E_min) * relative_epsilon
@@ -47,10 +47,10 @@ def update_v_1(value):
 
 def update_barrier_start(value):
 	""" Updates the start of the potential barrier """
-	if float(value) < maths.barrier_end - epsilon_x:
+	if float(value) < maths.barrier_end - 2*epsilon_x:
 		maths.barrier_start = float(value)
 	else:
-		maths.barrier_start = maths.barrier_end - epsilon_x
+		maths.barrier_start = maths.barrier_end - 2*epsilon_x
 	view.barrier_start_slider.set(maths.barrier_start)
 	update_textbox(view.barrier_start_textbox, round(maths.barrier_start, 3))
 	update_potential()
@@ -58,10 +58,10 @@ def update_barrier_start(value):
 
 def update_barrier_end(value):
 	""" Updates the end of the potential barrier """
-	if float(value) > maths.barrier_start + epsilon_x:
+	if float(value) > maths.barrier_start + 2*epsilon_x:
 		maths.barrier_end = float(value)
 	else:
-		maths.barrier_end = maths.barrier_start + epsilon_x
+		maths.barrier_end = maths.barrier_start + 2*epsilon_x
 	view.barrier_end_slider.set(maths.barrier_end)
 	update_textbox(view.barrier_end_textbox, round(maths.barrier_end, 3))
 	update_potential()
