@@ -1,3 +1,5 @@
+import main
+
 if __name__ == "__main__":
 	print("main.py should be started instead")
 	exit()
@@ -15,6 +17,7 @@ starting_x = 0
 
 # For playing
 playing = False
+time_speed = 0.01
 
 
 def update_textbox(textbox, value):
@@ -81,6 +84,14 @@ def update_e(value):
 	update_energy()
 
 
+def update_t(value):
+	""" Updates time """
+	maths.t = float(value)
+	view.t_slider.set(maths.t)
+	update_textbox(view.t_textbox, round(maths.t, 3))
+	update_energy()
+
+
 # Update values from a different textboxes
 def update_e_from_tb(event):
 	update_e(good_value(view.E_textbox.get(), maths.E))
@@ -104,6 +115,10 @@ def update_barrier_start_from_tb(event):
 
 def update_barrier_end_from_tb(event):
 	update_barrier_end(good_value(view.barrier_end_textbox.get(), maths.barrier_end))
+
+
+def update_t_from_tb(event):
+	update_t(good_value(view.t_textbox.get(), maths.t))
 
 
 def good_value(value, old_value):
@@ -178,11 +193,18 @@ def update_wave_function():
 def play_pause(event):
 	global playing
 	if not playing:
-		playing = True;
+		playing = True
 		view.t_play_pause.configure(text=view.pause_icon)
 	else:
-		playing = False;
+		playing = False
 		view.t_play_pause.configure(text=view.play_icon)
+
+
+def stop(event):
+	global playing
+	playing = False
+	view.t_play_pause.configure(text=view.play_icon)
+	update_t(maths.t_min)
 
 
 # Plot interaction handling

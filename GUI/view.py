@@ -119,6 +119,7 @@ def initialise():
 	V_1_slider.configure(command=controller.update_v_1)
 	barrier_start_slider.configure(command=controller.update_barrier_start)
 	barrier_end_slider.configure(command=controller.update_barrier_end)
+	t_slider.configure(command=controller.update_t)
 
 	# Binding textbox and button actions
 	E_textbox.bind("<Return>", controller.update_e_from_tb)
@@ -127,9 +128,10 @@ def initialise():
 	V_1_textbox.bind("<Return>", controller.update_v_1_from_tb)
 	barrier_start_textbox.bind("<Return>", controller.update_barrier_start_from_tb)
 	barrier_end_textbox.bind("<Return>", controller.update_barrier_end_from_tb)
+	t_textbox.bind("<Return>", controller.update_t_from_tb)
 	reset_button.bind("<Button-1>", controller.reset_values)
-
 	t_play_pause.bind("<Button-1>", controller.play_pause)
+	t_stop.bind("<Button-1>", controller.stop)
 
 	# Setting default values
 	controller.update_textbox(E_textbox, maths.E)
@@ -138,6 +140,7 @@ def initialise():
 	controller.update_textbox(V_1_textbox, maths.V_1)
 	controller.update_textbox(barrier_start_textbox, maths.barrier_start)
 	controller.update_textbox(barrier_end_textbox, maths.barrier_end)
+	controller.update_textbox(t_textbox, maths.t)
 
 	E_slider.set(maths.E)
 	V_0_slider.set(maths.V_0)
@@ -145,5 +148,6 @@ def initialise():
 	V_1_slider.set(maths.V_1)
 	barrier_start_slider.set(maths.barrier_start)
 	barrier_end_slider.set(maths.barrier_end)
+	t_slider.set(maths.t)
 
 	window.mainloop()
