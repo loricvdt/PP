@@ -13,6 +13,9 @@ epsilon_x = (maths.x_max - maths.x_min) * relative_epsilon
 epsilon_E = (maths.E_max - maths.E_min) * relative_epsilon
 starting_x = 0
 
+# For playing
+playing = False
+
 
 def update_textbox(textbox, value):
 	""" Updates the value in a textbox """
@@ -47,13 +50,14 @@ def update_v_1(value):
 
 def update_barrier_start(value):
 	""" Updates the start of the potential barrier """
-	if float(value) < maths.barrier_end - 2*epsilon_x:
-		maths.barrier_start = float(value)
-	else:
-		maths.barrier_start = maths.barrier_end - 2*epsilon_x
-	view.barrier_start_slider.set(maths.barrier_start)
-	update_textbox(view.barrier_start_textbox, round(maths.barrier_start, 3))
-	update_potential()
+	return  # Disabled
+	# if float(value) < maths.barrier_end - 2*epsilon_x:
+	# 	maths.barrier_start = float(value)
+	# else:
+	# 	maths.barrier_start = maths.barrier_end - 2*epsilon_x
+	# view.barrier_start_slider.set(maths.barrier_start)
+	# update_textbox(view.barrier_start_textbox, round(maths.barrier_start, 3))
+	# update_potential()
 
 
 def update_barrier_end(value):
@@ -69,6 +73,8 @@ def update_barrier_end(value):
 
 def update_e(value):
 	""" Updates the energy """
+	if float(value) < maths.E_limit:
+		value = maths.E_limit
 	maths.E = float(value)
 	view.E_slider.set(maths.E)
 	update_textbox(view.E_textbox, round(maths.E, 3))
@@ -111,12 +117,37 @@ def good_value(value, old_value):
 
 def reset_values(event):
 	""" Resets to initial values """
-	update_v_0(maths.default_V_0)
-	update_v_barrier(maths.default_V_barrier)
-	update_v_1(maths.default_V_1)
-	update_barrier_start(maths.default_barrier_start)
-	update_barrier_end(maths.default_barrier_end)
-	update_e(maths.default_E)
+
+	maths.E = maths.default_E
+	view.E_slider.set(maths.E)
+	update_textbox(view.E_textbox, round(maths.E, 3))
+
+	maths.V_0 = maths.default_V_0
+	view.V_0_slider.set(maths.V_0)
+	update_textbox(view.V_0_textbox, round(maths.V_0, 3))
+
+	maths.V_barrier = maths.default_V_barrier
+	view.V_barrier_slider.set(maths.V_barrier)
+	update_textbox(view.V_barrier_textbox, round(maths.V_barrier, 3))
+
+	maths.V_1 = maths.default_V_1
+	view.V_1_slider.set(maths.V_1)
+	update_textbox(view.V_1_textbox, round(maths.V_1, 3))
+
+	maths.barrier_start = maths.default_barrier_start
+	view.barrier_start_slider.set(maths.barrier_start)
+	update_textbox(view.barrier_start_textbox, round(maths.barrier_start, 3))
+
+	maths.barrier_end = maths.default_barrier_end
+	view.barrier_end_slider.set(maths.barrier_end)
+	update_textbox(view.barrier_end_textbox, round(maths.barrier_end, 3))
+
+	maths.calculate_energy()
+	maths.calculate_potential()
+	view.energy_plt.set_data(maths.energy[0], maths.energy[1])
+	update_wave_function()
+	view.plt.draw()
+	view.canvas.draw()
 
 
 def update_potential():
@@ -141,6 +172,17 @@ def update_wave_function():
 	""" Updates the wave function """
 	maths.calculate_wave_function()
 	view.wave_function_plt.set_data(maths.psi[0], maths.psi[1])
+
+
+# Play/pause
+def play_pause(event):
+	global playing
+	if not playing:
+		playing = True;
+		view.t_play_pause.configure(text=view.pause_icon)
+	else:
+		playing = False;
+		view.t_play_pause.configure(text=view.play_icon)
 
 
 # Plot interaction handling
@@ -194,12 +236,12 @@ def motion_notify_callback(event):
 			update_barrier_end(event.xdata)
 		elif in_range == "E":
 			update_e(event.ydata)
-		elif in_range == "barrier":
-			delta = event.xdata - starting_x
-			if maths.barrier_start + delta >= maths.x_min and maths.barrier_end + delta <= maths.x_max:
-				starting_x = starting_x + delta
-				update_barrier_start(maths.barrier_start + delta)
-				update_barrier_end(maths.barrier_end + delta)
+		# elif in_range == "barrier":  # Disabled
+		# 	delta = event.xdata - starting_x
+		# 	if maths.barrier_start + delta >= maths.x_min and maths.barrier_end + delta <= maths.x_max:
+		# 		starting_x = starting_x + delta
+		# 		update_barrier_start(maths.barrier_start + delta)
+		# 		update_barrier_end(maths.barrier_end + delta)
 
 
 def connect_figure_actions():

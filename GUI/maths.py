@@ -7,6 +7,7 @@ import numpy as np
 # Calculation range (nm)
 x_min = -4
 x_max = 6
+calculations = 1000
 
 # Potential
 default_V_0 = 0  # (eV)
@@ -25,8 +26,9 @@ potential = [[], []]  # Potential plot data
 # Energy
 default_E = 1
 E = default_E
-E_min = -1
-E_max = 3
+E_min = -2
+E_max = 2
+E_limit = 0.0
 
 energy = [[x_min, x_max], []]  # Potential plot data
 
@@ -44,10 +46,15 @@ R = 0
 T = 0
 
 # Wave function
-psi_min = -1
+psi_min = -3
 psi_max = 3
 psi = [[], []]
 
+# Time
+default_t = 0
+t = default_t
+t_min = 0
+t_max = 40
 
 def calculate_potential():
 	""" Calculates the value of the potential """
@@ -67,16 +74,16 @@ def calculate_wave_function():
 	global psi
 	calculate_constants()
 
-	psi[0] = np.linspace(x_min, x_max, 500)
+	psi[0] = np.linspace(x_min, x_max, calculations)
 	psi[1] = []
 
 	for x in psi[0]:
-		psi[1].append(np.abs(wave_function_value(x)))
+		psi[1].append(wave_function_value(x))
 
 
 def calculate_constants():
 	""" Calculate needed constants for the wave function """
-	global k_s, k_b, K_b, k_e, A, B, R, T
+	global k_s, k_b, K_b, k_e, A, B, R, T, E
 	if E - V_0 <= 0:
 		return
 
@@ -95,8 +102,7 @@ def calculate_constants():
 
 	if E - V_barrier > 0:  # Case 1
 		A = 1 / \
-			((k_b / k_e - 1) / (k_b / k_e + 1) * np.exp(2 * 1j * k_b * x_e) + (1 + k_b / k_s) / (
-						1 - k_b / k_s) * np.exp(2 * 1j * k_b * x_s)) \
+			((k_b / k_e - 1) / (k_b / k_e + 1) * np.exp(2 * 1j * k_b * x_e) + (1 + k_b / k_s) / (1 - k_b / k_s) * np.exp(2 * 1j * k_b * x_s)) \
 			* (2 * np.exp(1j * k_s * k_b * x_s)) / (1 - k_b / k_s)
 		B = (k_b / k_e - 1) / (k_b / k_e + 1) * A * np.exp(2 * 1j * k_b * x_e)
 		R = np.exp(1j * k_s * x_s) * (A * np.exp(1j * k_b * x_s) + B * np.exp(-1j * k_b * x_s) - np.exp(1j * k_s * x_s))
