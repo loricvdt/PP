@@ -4,6 +4,7 @@ if __name__ == "__main__":
 	print("main.py should be started instead")
 	exit()
 
+import numpy as np
 
 import maths
 import view
@@ -186,7 +187,15 @@ def update_energy():
 def update_wave_function():
 	""" Updates the wave function """
 	maths.calculate_wave_function()
-	view.wave_function_plt.set_data(maths.psi[0], maths.psi[1])
+	if view.show_abs.get():
+		view.wave_function_abs.set_data(maths.psi[0], np.absolute(maths.psi[1]))
+	if view.show_real.get():
+		view.wave_function_real.set_data(maths.psi[0], np.real(maths.psi[1]))
+	if view.show_imaginary.get():
+		view.wave_function_imaginary.set_data(maths.psi[0], np.imag(maths.psi[1]))
+	if view.show_color_mesh.get():
+		view.wave_function_color_mesh.remove()
+		view.plot_color_mesh(maths.psi)
 
 
 def change_wave_type():

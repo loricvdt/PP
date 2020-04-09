@@ -3,7 +3,6 @@ if __name__ == "__main__":
 	exit()
 
 import numpy as np
-from math import pi
 
 # Calculation range (nm)
 x_min = -4

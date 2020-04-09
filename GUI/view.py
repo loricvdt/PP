@@ -6,6 +6,7 @@ if __name__ == "__main__":
 import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
 
 import maths
 import controller
@@ -56,7 +57,69 @@ maths.calculate_potential()
 potential_plt, = ax.plot(maths.potential[0], maths.potential[1], 'b', label="Potential")
 
 maths.calculate_wave_function()
-wave_function_plt, = ax2.plot(maths.psi[0], maths.psi[1], 'k', linewidth=1, label="Wave function")
+show_abs = tk.BooleanVar(value=False)
+wave_function_abs = None
+show_real = tk.BooleanVar(value=True)
+wave_function_real = None
+show_imaginary = tk.BooleanVar(value=False)
+wave_function_imaginary = None
+show_color_mesh = tk.BooleanVar(value=False)
+wave_function_color_mesh = None
+
+
+def plot_wave_function_abs():
+	global wave_function_abs
+	if show_abs.get():
+		wave_function_abs, = ax2.plot(maths.psi[0], np.absolute(maths.psi[1]), 'k', linewidth=1, label="Probability density")
+	elif wave_function_abs is not None:
+		wave_function_abs.remove()
+	plt.draw()
+	canvas.draw()
+
+
+def plot_wave_function_real():
+	global wave_function_real
+	if show_real.get():
+		wave_function_real, = ax2.plot(maths.psi[0], np.real(maths.psi[1]), 'r', linewidth=.5, label="Real part")
+	elif wave_function_real is not None:
+		wave_function_real.remove()
+	plt.draw()
+	canvas.draw()
+
+
+def plot_wave_function_imaginary():
+	global  wave_function_imaginary
+	if show_imaginary.get():
+		wave_function_imaginary, = ax2.plot(maths.psi[0], np.imag(maths.psi[1]), 'b', linewidth=.5, label="Imaginary part")
+	elif wave_function_imaginary is not None:
+		wave_function_imaginary.remove()
+	plt.draw()
+	canvas.draw()
+
+
+def plot_color_mesh(psi=maths.psi):
+	global wave_function_color_mesh
+	if show_color_mesh.get():
+		x_array = np.array([psi[0], psi[0]])
+
+		y0 = np.zeros(len(psi[0]))
+		y = [abs(i) for i in psi[1]]
+		y_array = np.array([y0, y])
+
+		psi_array = np.array([psi[1], psi[1]])
+		angle = np.angle(psi_array)
+
+		wave_function_color_mesh = ax2.pcolormesh(x_array, y_array, angle, cmap=plt.cm.hsv, vmin=-np.pi, vmax=np.pi)
+	elif wave_function_color_mesh is not None:
+		wave_function_color_mesh.remove()
+	plt.draw()
+	canvas.draw()
+
+
+plot_wave_function_abs()
+plot_wave_function_real()
+plot_wave_function_imaginary()
+plot_color_mesh(maths.psi)
 
 ax.legend()
 figure.tight_layout()
@@ -78,13 +141,18 @@ barrier_start_textbox = tk.Entry(right_frame, width=10, state="disabled")
 barrier_end_textbox = tk.Entry(right_frame, width=10)
 
 # Creating radio buttons
-wave_packet_bool = tk.BooleanVar()
-wave_packet_bool.set(maths.wave_packet)
+wave_packet_bool = tk.BooleanVar(value=maths.wave_packet)
 plane_wave = tk.Radiobutton(right_frame, text="Plane wave", variable=wave_packet_bool, val=False)
 wave_packet = tk.Radiobutton(right_frame, text="Wave packet", variable=wave_packet_bool, val=True)
 
 # Creating reset button
 reset_button = tk.Button(right_frame, text="Reset")
+
+# Creating checkboxes
+abs_checkbox = tk.Checkbutton(right_frame, text="Probability density", variable=show_abs, command=plot_wave_function_abs)
+real_checkbox = tk.Checkbutton(right_frame, text="Real part", variable=show_real, command=plot_wave_function_real)
+imaginary_checkbox = tk.Checkbutton(right_frame, text="Imaginary", variable=show_imaginary, command=plot_wave_function_imaginary)
+color_mesh_checkbox = tk.Checkbutton(right_frame, text="Phase colours", variable=show_color_mesh, command=plot_color_mesh)
 
 # Time controls
 t_label = tk.Label(time_control_frame, text="Time")
@@ -115,6 +183,10 @@ barrier_end_textbox.grid(row=5, column=1, sticky=tk.S)
 reset_button.grid(row=6, column=1, sticky=tk.NSEW)
 plane_wave.grid(row=7, column=0, sticky=tk.W)
 wave_packet.grid(row=8, column=0, sticky=tk.W)
+real_checkbox.grid(row=9, column=0, sticky=tk.W)
+imaginary_checkbox.grid(row=10, column=0, sticky=tk.W)
+abs_checkbox.grid(row=9, column=1, sticky=tk.W)
+color_mesh_checkbox.grid(row=10, column=1, sticky=tk.W)
 
 
 def initialise():
