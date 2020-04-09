@@ -75,6 +75,17 @@ def update_barrier_end(value):
 	update_potential()
 
 
+def update_wave_number(value):
+	""" Updates the wave number """
+	maths.k_0 = float(value)
+	view.wave_number_slider.set(maths.k_0)
+	update_textbox(view.wave_number_textbox, round(maths.k_0, 3))
+	update_potential()
+	update_wave_function()
+	view.plt.draw()
+	view.canvas.draw()
+
+
 def update_e(value):
 	""" Updates the energy """
 	if float(value) < maths.E_limit:
@@ -118,6 +129,10 @@ def update_barrier_end_from_tb(event):
 	update_barrier_end(good_value(view.barrier_end_textbox.get(), maths.barrier_end))
 
 
+def update_wave_number_from_tb(event):
+	update_wave_number(good_value(view.wave_number_textbox.get(), maths.k_0))
+
+
 def update_t_from_tb(event):
 	update_t(good_value(view.t_textbox.get(), maths.t))
 
@@ -133,7 +148,6 @@ def good_value(value, old_value):
 
 def reset_values():
 	""" Resets to initial values """
-
 	maths.E = maths.default_E
 	view.E_slider.set(maths.E)
 	update_textbox(view.E_textbox, round(maths.E, 3))
@@ -157,6 +171,10 @@ def reset_values():
 	maths.barrier_end = maths.default_barrier_end
 	view.barrier_end_slider.set(maths.barrier_end)
 	update_textbox(view.barrier_end_textbox, round(maths.barrier_end, 3))
+
+	maths.k_0 = maths.default_k_0
+	view.wave_number_slider.set(maths.k_0)
+	update_textbox(view.wave_number_textbox, round(maths.k_0, 3))
 
 	maths.calculate_energy()
 	maths.calculate_potential()

@@ -47,9 +47,12 @@ psi_min = -4
 psi_max = 4
 psi = [[], []]
 
-# Wave packet
+# Wave
 wave_packet = False
-k_0 = 6
+default_k_0 = 6
+k_0 = default_k_0
+k_0_min = 1
+k_0_max = 15
 alpha = 1
 omega = k_0**2 * alpha / 2
 
@@ -82,7 +85,7 @@ def calculate_wave_function():
 
 	time_factor = np.exp(-1j * omega * t)
 	for x in psi[0]:
-		psi[1].append(wave_function_value(x) * time_factor )
+		psi[1].append(wave_function_value(x) * time_factor)
 
 
 def calculate_constants():

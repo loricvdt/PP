@@ -131,6 +131,7 @@ V_barrier_slider = tk.Scale(right_frame, from_=maths.E_min, to=maths.E_max, reso
 V_1_slider = tk.Scale(right_frame, from_=maths.E_min, to=maths.E_max, resolution=0.01, orient=tk.HORIZONTAL, length=200, label="Potential after barrier (eV)", showvalue=0)
 barrier_start_slider = tk.Scale(right_frame, state="disabled", from_=maths.x_min, to=maths.x_max, resolution=0.01, orient=tk.HORIZONTAL, length=200, label="Barrier start (nm) [disabled]", showvalue=0)
 barrier_end_slider = tk.Scale(right_frame, from_=maths.x_min, to=maths.x_max, resolution=0.01, orient=tk.HORIZONTAL, length=200, label="Barrier end (nm)", showvalue=0)
+wave_number_slider = tk.Scale(right_frame, from_=maths.k_0_min, to=maths.k_0_max, resolution=0.01, orient=tk.HORIZONTAL, length=200, label="Wave number", showvalue=0)
 
 # Creating text boxes
 E_textbox = tk.Entry(right_frame, width=10)
@@ -139,6 +140,7 @@ V_barrier_textbox = tk.Entry(right_frame, width=10)
 V_1_textbox = tk.Entry(right_frame, width=10)
 barrier_start_textbox = tk.Entry(right_frame, width=10, state="disabled")
 barrier_end_textbox = tk.Entry(right_frame, width=10)
+wave_number_textbox = tk.Entry(right_frame, width=10)
 
 # Creating radio buttons
 wave_packet_bool = tk.BooleanVar(value=maths.wave_packet)
@@ -180,13 +182,15 @@ barrier_start_slider.grid(row=4, column=0)
 barrier_start_textbox.grid(row=4, column=1, sticky=tk.S)
 barrier_end_slider.grid(row=5, column=0)
 barrier_end_textbox.grid(row=5, column=1, sticky=tk.S)
-reset_button.grid(row=6, column=1, sticky=tk.NSEW)
-plane_wave.grid(row=7, column=0, sticky=tk.W)
-wave_packet.grid(row=8, column=0, sticky=tk.W)
-real_checkbox.grid(row=9, column=0, sticky=tk.W)
-imaginary_checkbox.grid(row=10, column=0, sticky=tk.W)
-abs_checkbox.grid(row=9, column=1, sticky=tk.W)
-color_mesh_checkbox.grid(row=10, column=1, sticky=tk.W)
+wave_number_slider.grid(row=6, column=0)
+wave_number_textbox.grid(row=6, column=1, sticky=tk.S)
+reset_button.grid(row=7, column=1, sticky=tk.NSEW)
+plane_wave.grid(row=8, column=0, sticky=tk.W)
+wave_packet.grid(row=9, column=0, sticky=tk.W)
+real_checkbox.grid(row=10, column=0, sticky=tk.W)
+imaginary_checkbox.grid(row=11, column=0, sticky=tk.W)
+abs_checkbox.grid(row=10, column=1, sticky=tk.W)
+color_mesh_checkbox.grid(row=11, column=1, sticky=tk.W)
 
 
 def initialise():
@@ -202,6 +206,7 @@ def initialise():
 	V_1_slider.configure(command=controller.update_v_1)
 	barrier_start_slider.configure(command=controller.update_barrier_start)
 	barrier_end_slider.configure(command=controller.update_barrier_end)
+	wave_number_slider.configure(command=controller.update_wave_number)
 	t_slider.configure(command=controller.update_t)
 
 	# Binding button actions
@@ -220,6 +225,7 @@ def initialise():
 	V_1_textbox.bind("<Return>", controller.update_v_1_from_tb)
 	barrier_start_textbox.bind("<Return>", controller.update_barrier_start_from_tb)
 	barrier_end_textbox.bind("<Return>", controller.update_barrier_end_from_tb)
+	wave_number_textbox.bind("<Return>", controller.update_wave_number_from_tb)
 	t_textbox.bind("<Return>", controller.update_t_from_tb)
 
 	# Setting default values
@@ -237,6 +243,7 @@ def initialise():
 	V_1_slider.set(maths.V_1)
 	barrier_start_slider.set(maths.barrier_start)
 	barrier_end_slider.set(maths.barrier_end)
+	wave_number_slider.set(maths.k_0)
 	t_slider.set(maths.t)
 
 	window.mainloop()
