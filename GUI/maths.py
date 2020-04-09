@@ -3,6 +3,7 @@ if __name__ == "__main__":
 	exit()
 
 import numpy as np
+from math import pi
 
 # Calculation range (nm)
 x_min = -4
@@ -32,9 +33,6 @@ E_limit = 0.0
 
 energy = [[x_min, x_max], []]  # Potential plot data
 
-# Wave number
-k_0 = 6
-
 # Constants
 k_s = 0
 k_b = 0
@@ -46,15 +44,21 @@ R = 0
 T = 0
 
 # Wave function
-psi_min = -3
-psi_max = 3
+psi_min = -4
+psi_max = 4
 psi = [[], []]
+
+# Wave packet
+wave_packet = False
+k_0 = 6
+alpha = 1
+omega = k_0**2 * alpha / 2
 
 # Time
 default_t = 0
 t = default_t
 t_min = 0
-t_max = 40
+t_max = 5
 
 def calculate_potential():
 	""" Calculates the value of the potential """
@@ -77,8 +81,9 @@ def calculate_wave_function():
 	psi[0] = np.linspace(x_min, x_max, calculations)
 	psi[1] = []
 
+	time_factor = np.exp(-1j * omega * t)
 	for x in psi[0]:
-		psi[1].append(wave_function_value(x))
+		psi[1].append(wave_function_value(x) * time_factor )
 
 
 def calculate_constants():
@@ -132,17 +137,22 @@ def calculate_constants():
 
 def wave_function_value(x):
 	""" Returns value of the wave function at a x value """
-	if E - V_0 <= 0:
-		return 0
-	else:  # E - V_0 > 0
+	psi_x = 0
+	if E - V_0 > 0:
 		if x < barrier_start:
-			return np.exp(1j * k_s * x) + R * np.exp(-1j * k_s * x)
+			psi_x = np.exp(1j * k_s * x) + R * np.exp(-1j * k_s * x)
 		elif barrier_start <= x <= barrier_end:
 			if E - V_barrier > 0:
-				return A * np.exp(1j * k_b * x) + B * np.exp(-1j * k_b * x)
+				psi_x = A * np.exp(1j * k_b * x) + B * np.exp(-1j * k_b * x)
 			elif E - V_barrier < 0:
-				return A * np.sinh(K_b * x) + B * np.cosh(K_b * x)
+				psi_x = A * np.sinh(K_b * x) + B * np.cosh(K_b * x)
 			else:  # E - V_barrier = 0
-				return A * x + B
+				psi_x = A * x + B
 		else:  # x > barrier_end
-			return T * np.exp(1j * k_e * x)
+			psi_x = T * np.exp(1j * k_e * x)
+
+	packet_factor = 1
+	if wave_packet:
+		packet_factor = 1
+
+	return psi_x * packet_factor

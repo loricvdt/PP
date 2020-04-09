@@ -77,15 +77,21 @@ V_1_textbox = tk.Entry(right_frame, width=10)
 barrier_start_textbox = tk.Entry(right_frame, width=10, state="disabled")
 barrier_end_textbox = tk.Entry(right_frame, width=10)
 
-# Time controls
-t_label = tk.Label(time_control_frame, text="Time")
-t_play_pause = tk.Button(time_control_frame, text=play_icon)
-t_stop = tk.Button(time_control_frame, text="⏹")
-t_slider = tk.Scale(time_control_frame, from_=maths.t_min, to=maths.t_max, resolution=0.01, orient=tk.HORIZONTAL, showvalue=0)
-t_textbox = tk.Entry(time_control_frame, width=10)
+# Creating radio buttons
+wave_packet_bool = tk.BooleanVar()
+wave_packet_bool.set(maths.wave_packet)
+plane_wave = tk.Radiobutton(right_frame, text="Plane wave", variable=wave_packet_bool, val=False)
+wave_packet = tk.Radiobutton(right_frame, text="Wave packet", variable=wave_packet_bool, val=True)
 
 # Creating reset button
 reset_button = tk.Button(right_frame, text="Reset")
+
+# Time controls
+t_label = tk.Label(time_control_frame, text="Time")
+t_play_pause = tk.Button(time_control_frame, text=play_icon, state="disabled")
+t_stop = tk.Button(time_control_frame, text="⏹")
+t_slider = tk.Scale(time_control_frame, from_=maths.t_min, to=maths.t_max, resolution=0.01, orient=tk.HORIZONTAL, showvalue=0)
+t_textbox = tk.Entry(time_control_frame, width=10)
 
 # Adding all to view
 t_label.grid(row=0, column=0)
@@ -96,7 +102,7 @@ t_textbox.grid(row=0, column=4)
 
 E_slider.grid(row=0, column=0)
 E_textbox.grid(row=0, column=1, sticky=tk.S)
-V_0_slider.grid(row=1, column=0)  # disabled because wrong results
+V_0_slider.grid(row=1, column=0)
 V_0_textbox.grid(row=1, column=1, sticky=tk.S)
 V_barrier_slider.grid(row=2, column=0)
 V_barrier_textbox.grid(row=2, column=1, sticky=tk.S)
@@ -107,12 +113,17 @@ barrier_start_textbox.grid(row=4, column=1, sticky=tk.S)
 barrier_end_slider.grid(row=5, column=0)
 barrier_end_textbox.grid(row=5, column=1, sticky=tk.S)
 reset_button.grid(row=6, column=1, sticky=tk.NSEW)
+plane_wave.grid(row=7, column=0, sticky=tk.W)
+wave_packet.grid(row=8, column=0, sticky=tk.W)
 
 
 def initialise():
-	global V_0_slider, V_barrier_slider, V_1_slider, barrier_start_slider, barrier_end_slider, E_slider, t_slider
+	# Bind plot actions with corresponding functions
+	figure.canvas.mpl_connect('button_press_event', controller.button_press_callback)
+	figure.canvas.mpl_connect('button_release_event', controller.button_release_callback)
+	figure.canvas.mpl_connect('motion_notify_event', controller.motion_notify_callback)
 
-	# Updating sliders with correct values and binding command
+	# Binding command to sliders
 	E_slider.configure(command=controller.update_e)
 	V_0_slider.configure(command=controller.update_v_0)
 	V_barrier_slider.configure(command=controller.update_v_barrier)
@@ -121,7 +132,16 @@ def initialise():
 	barrier_end_slider.configure(command=controller.update_barrier_end)
 	t_slider.configure(command=controller.update_t)
 
-	# Binding textbox and button actions
+	# Binding button actions
+	reset_button.configure(command=controller.reset_values)
+	t_play_pause.configure(command=controller.play_pause)
+	t_stop.configure(command=controller.stop)
+
+	# Binding radio button actions
+	plane_wave.configure(command=controller.change_wave_type)
+	wave_packet.configure(command=controller.change_wave_type, state="disabled")
+
+	# Binding textbox actions
 	E_textbox.bind("<Return>", controller.update_e_from_tb)
 	V_0_textbox.bind("<Return>", controller.update_v_0_from_tb)
 	V_barrier_textbox.bind("<Return>", controller.update_v_barrier_from_tb)
@@ -129,9 +149,6 @@ def initialise():
 	barrier_start_textbox.bind("<Return>", controller.update_barrier_start_from_tb)
 	barrier_end_textbox.bind("<Return>", controller.update_barrier_end_from_tb)
 	t_textbox.bind("<Return>", controller.update_t_from_tb)
-	reset_button.bind("<Button-1>", controller.reset_values)
-	t_play_pause.bind("<Button-1>", controller.play_pause)
-	t_stop.bind("<Button-1>", controller.stop)
 
 	# Setting default values
 	controller.update_textbox(E_textbox, maths.E)

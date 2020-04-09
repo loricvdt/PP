@@ -130,7 +130,7 @@ def good_value(value, old_value):
 		return old_value
 
 
-def reset_values(event):
+def reset_values():
 	""" Resets to initial values """
 
 	maths.E = maths.default_E
@@ -189,8 +189,15 @@ def update_wave_function():
 	view.wave_function_plt.set_data(maths.psi[0], maths.psi[1])
 
 
+def change_wave_type():
+	maths.wave_packet = view.wave_packet_bool.get()
+	update_wave_function()
+	view.plt.draw()
+	view.canvas.draw()
+
+
 # Play/pause
-def play_pause(event):
+def play_pause():
 	global playing
 	if not playing:
 		playing = True
@@ -200,7 +207,7 @@ def play_pause(event):
 		view.t_play_pause.configure(text=view.play_icon)
 
 
-def stop(event):
+def stop():
 	global playing
 	playing = False
 	view.t_play_pause.configure(text=view.play_icon)
@@ -266,13 +273,5 @@ def motion_notify_callback(event):
 		# 		update_barrier_end(maths.barrier_end + delta)
 
 
-def connect_figure_actions():
-	""" Binds the plot actions with corresponding functions """
-	view.figure.canvas.mpl_connect('button_press_event', button_press_callback)
-	view.figure.canvas.mpl_connect('button_release_event', button_release_callback)
-	view.figure.canvas.mpl_connect('motion_notify_event', motion_notify_callback)
-
-
 def initialise():
-	connect_figure_actions()
 	view.initialise()
