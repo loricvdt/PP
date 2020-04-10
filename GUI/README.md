@@ -1,19 +1,25 @@
 # GUI for the potential barrier
 
-Graphical interface enabling to modify parameters of the wave function passing through a potential barrier in real time. For information on how the calculations are made check [calculations](calculations.pdf)
+Graphical interface enabling to modify parameters of a wave function passing through a potential barrier in real time. For information on how the calculations are made check [calculations](calculations.pdf)
 
 Created by [Loric Vandentempel](https://github.com/loricvdt/)
 
 ## Dependencies
 
-The packages needed to run this code are **tkinter** (may already come with Python) and **matplotlib**
+The packages needed to run this code are **tkinter**, **time**, **threading** (these may already come with the Python installation), **matplotlib** and **numpy**
 
 ## Usage
 
-Potential barrier and energy parameters are settable by:
+To run the application, use Python 3: `python main.py` or `python3 main.py`
 
-- Moving the sliders on the right
-- Setting the value in the corresponding text box and pressing enter
-- Dragging the lines on the graph to the desired shape
+All parameters are settable using the available sliders on the right side or by entering the value in the text boxes next to them and pressing `Return`
 
-In addition, it is also possible to drag in between the vertical lines of the potential to move the entire barrier sideways
+The potential barrier and the energy level can also be edited directly on the graph by dragging the corresponding line
+
+At the bottom are the controls for the time (Play/Pause, Stop and the corresponding slider and text box)
+
+Radio buttons also control whether the graph shows a plane wave or a gaussian wave packet and check boxes control what part of the complex wave function is displayed
+
+## Screenshot
+
+![screenshot.png](screenshot.png)
