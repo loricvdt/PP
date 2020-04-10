@@ -197,6 +197,11 @@ abs_checkbox.grid(row=11, column=1, sticky=tk.W)
 color_mesh_checkbox.grid(row=12, column=1, sticky=tk.W)
 
 
+def on_closing():
+	controller.playing = False
+	exit()
+
+
 def initialise():
 	# Bind plot actions with corresponding functions
 	figure.canvas.mpl_connect('button_press_event', controller.button_press_callback)
@@ -261,5 +266,7 @@ def initialise():
 	else:
 		gaussian_slider.configure(state="disabled")
 		gaussian_textbox.configure(state="disabled")
+
+	window.protocol("WM_DELETE_WINDOW", on_closing)
 
 	window.mainloop()

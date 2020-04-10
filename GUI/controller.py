@@ -18,7 +18,6 @@ starting_x = 0
 
 # For playing
 playing = False
-time_speed = 0.01
 
 
 def update_textbox(textbox, value):
