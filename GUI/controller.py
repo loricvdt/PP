@@ -86,6 +86,17 @@ def update_wave_number(value):
 	view.canvas.draw()
 
 
+def update_a(value):
+	""" Updates the gaussian distribution factor """
+	maths.a = float(value)
+	view.gaussian_slider.set(maths.a)
+	update_textbox(view.gaussian_textbox, round(maths.a, 3))
+	update_potential()
+	update_wave_function()
+	view.plt.draw()
+	view.canvas.draw()
+
+
 def update_e(value):
 	""" Updates the energy """
 	if float(value) < maths.E_limit:
@@ -133,6 +144,10 @@ def update_wave_number_from_tb(event):
 	update_wave_number(good_value(view.wave_number_textbox.get(), maths.k_0))
 
 
+def update_a_from_tb(event):
+	update_a(good_value(view.gaussian_textbox.get(), maths.a))
+
+
 def update_t_from_tb(event):
 	update_t(good_value(view.t_textbox.get(), maths.t))
 
@@ -176,6 +191,10 @@ def reset_values():
 	view.wave_number_slider.set(maths.k_0)
 	update_textbox(view.wave_number_textbox, round(maths.k_0, 3))
 
+	maths.a = maths.default_a
+	view.gaussian_slider.set(maths.a)
+	update_textbox(view.gaussian_textbox, round(maths.a, 3))
+
 	maths.calculate_energy()
 	maths.calculate_potential()
 	view.energy_plt.set_data(maths.energy[0], maths.energy[1])
@@ -218,6 +237,12 @@ def update_wave_function():
 
 def change_wave_type():
 	maths.wave_packet = view.wave_packet_bool.get()
+	if maths.wave_packet:
+		view.gaussian_slider.configure(state="normal")
+		view.gaussian_textbox.configure(state="normal")
+	else:
+		view.gaussian_slider.configure(state="disabled")
+		view.gaussian_textbox.configure(state="disabled")
 	update_wave_function()
 	view.plt.draw()
 	view.canvas.draw()

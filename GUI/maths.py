@@ -5,8 +5,8 @@ if __name__ == "__main__":
 import numpy as np
 
 # Calculation range (nm)
-x_min = -4
-x_max = 6
+x_min = -8
+x_max = 10
 calculations = 1000
 
 # Potential
@@ -55,6 +55,11 @@ k_0_min = 1
 k_0_max = 15
 alpha = 1
 omega = k_0**2 * alpha / 2
+default_a = 1
+a = default_a
+a_min = 0.5
+a_max = 5
+delta_start = -4
 
 # Time
 default_t = 0
@@ -137,24 +142,30 @@ def calculate_constants():
 		T = A / (1j * k_e * np.exp(1j * k_e * x_e))
 
 
+def gaussian(x, x_start, direction=1):
+	if wave_packet:
+		k = k_0
+		v = alpha * k
+		w = a ** 2 + 1j * alpha * t / 2
+		x = x - x_start
+		return np.exp(-((direction * x - v*t)**2)/(4*w))
+	else:
+		return 1
+
+
 def wave_function_value(x):
 	""" Returns value of the wave function at a x value """
-	psi_x = 0
-	if E - V_0 > 0:
+	if E - V_0 <= 0:
+		return 0
+	else:  # E - V_0 > 0
 		if x < barrier_start:
-			psi_x = np.exp(1j * k_s * x) + R * np.exp(-1j * k_s * x)
+			return gaussian(x, barrier_start + delta_start, 1) * np.exp(1j * k_s * x) + gaussian(x, barrier_start - delta_start, -1) * R * np.exp(-1j * k_s * x)
 		elif barrier_start <= x <= barrier_end:
 			if E - V_barrier > 0:
-				psi_x = A * np.exp(1j * k_b * x) + B * np.exp(-1j * k_b * x)
+				return gaussian(x, barrier_start + delta_start, 1) * (A * np.exp(1j * k_b * x) + B * np.exp(-1j * k_b * x))
 			elif E - V_barrier < 0:
-				psi_x = A * np.sinh(K_b * x) + B * np.cosh(K_b * x)
+				return gaussian(x, barrier_start + delta_start, 1) * (A * np.sinh(K_b * x) + B * np.cosh(K_b * x))
 			else:  # E - V_barrier = 0
-				psi_x = A * x + B
+				return gaussian(x, barrier_start + delta_start, 1) * (A * x + B)
 		else:  # x > barrier_end
-			psi_x = T * np.exp(1j * k_e * x)
-
-	packet_factor = 1
-	if wave_packet:
-		packet_factor = 1
-
-	return psi_x * packet_factor
+			return gaussian(x, barrier_start + delta_start, 1) * T * np.exp(1j * k_e * x)
