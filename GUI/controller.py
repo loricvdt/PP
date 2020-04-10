@@ -5,6 +5,8 @@ if __name__ == "__main__":
 	exit()
 
 import numpy as np
+import threading
+import time
 
 import maths
 import view
@@ -18,6 +20,7 @@ starting_x = 0
 
 # For playing
 playing = False
+time_speed = 0.02
 
 
 def update_textbox(textbox, value):
@@ -248,11 +251,21 @@ def change_wave_type():
 
 
 # Play/pause
+def play():
+	while playing:
+		view.t_slider.set(maths.t + time_speed)
+		if maths.t >= maths.t_max:
+			stop()
+			return
+		time.sleep(0.02)
+
+
 def play_pause():
 	global playing
 	if not playing:
 		playing = True
 		view.t_play_pause.configure(text=view.pause_icon)
+		threading.Thread(target=play).start()
 	else:
 		playing = False
 		view.t_play_pause.configure(text=view.play_icon)

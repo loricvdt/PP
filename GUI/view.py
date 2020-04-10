@@ -160,7 +160,7 @@ color_mesh_checkbox = tk.Checkbutton(right_frame, text="Phase colours", variable
 
 # Time controls
 t_label = tk.Label(time_control_frame, text="Time")
-t_play_pause = tk.Button(time_control_frame, text=play_icon, state="disabled")
+t_play_pause = tk.Button(time_control_frame, text=play_icon)
 t_stop = tk.Button(time_control_frame, text="⏹")
 t_slider = tk.Scale(time_control_frame, from_=maths.t_min, to=maths.t_max, resolution=0.01, orient=tk.HORIZONTAL, showvalue=0)
 t_textbox = tk.Entry(time_control_frame, width=10)
